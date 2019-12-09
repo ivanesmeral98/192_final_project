@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from core.views import splash, select, recommend
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', splash, name='splash'),
+    path('select', select, name='select'),
+    path('recommend', recommend, name='recommend')
 ]
