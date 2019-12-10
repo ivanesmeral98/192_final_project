@@ -29,7 +29,7 @@ def select(request):
 
 
 def recommend(request):
-    elmo = Magnitude("elmo_2x2048_256_2048cnn_1xhighway_weights.magnitude")
+    elmo = Magnitude('elmo-light-1536D.magnitude')
     knn = NearestNeighbors()
     X_train = []
     X_train_dict = {}
@@ -61,8 +61,6 @@ def recommend(request):
     return render(request, 'recommend.html', {"recs": rec_queries})
 
 
-def course(request, code):
-    print(code)
-    print("yeet")
-    course_to_view = Course.objects.get(code=code)
+def course(request):
+    course_to_view = Course.objects.get(code=request.GET['code'])
     return render(request, 'course.html', {'course': course_to_view})

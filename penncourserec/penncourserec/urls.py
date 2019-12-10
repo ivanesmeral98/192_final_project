@@ -22,5 +22,5 @@ urlpatterns = [
     path('', splash, name='splash'),
     path('select', select, name='select'),
     path('recommend', recommend, name='recommend'),
-    path('course/<str:courseCode>', course, name='course')
+    path('course', course, name='course')
 ]
