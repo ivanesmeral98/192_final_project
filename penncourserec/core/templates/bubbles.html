@@ -44,20 +44,7 @@
             for (var i = 0; i < names.length; i ++) {
                data.push({name: names[i], color: 0xff2c55});
             }
-
-<!--            var data = [-->
-<!--                {name: "hello", color: 0xff2c55},-->
-<!--                {name: "Smashing Pumpkins", color: 0xff2c55},-->
-<!--                {name: "Weezer", color: 0xff2c55},-->
-<!--                {name: "Pearl Jam", color: 0xff2c55},-->
-<!--                {name: "American Analog Set", color: 0xff2c55},-->
-<!--                {name: "Sigur Ros", color: 0xff2c55},-->
-<!--                {name: "Radiohead", color: 0xff2c55},-->
-<!--                {name: "Do Make Say Think", color: 0xff2c55},-->
-<!--                {name: "Godspeed You Black Emperor!", color: 0xff2c55}-->
-<!--            ]-->
-
-
+            
             function getCoords(ev, canvas){
                 var rect = canvas.getBoundingClientRect();
                 var x = ev.data.global.x - rect.left - rect.width / 2;
