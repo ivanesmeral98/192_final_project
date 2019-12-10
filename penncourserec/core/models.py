@@ -11,5 +11,5 @@ class Course(models.Model):
     selected = models.BooleanField(default=False)
 
     def as_dict(self):
-    	return {'name': self.name, 'code': self.code, 'description': self.description, 'courseRating': self.courseRating, 'profRating': self.profRating, 'difficulty': self.difficulty, 'selected': self.selected}
+        return {'name': self.name, 'code': self.code, 'description': self.description, 'courseRating': self.courseRating, 'profRating': self.profRating, 'difficulty': self.difficulty, 'selected': self.selected}
 
