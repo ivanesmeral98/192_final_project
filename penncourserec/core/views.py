@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from core.models import Course
-import json
+import simplejson as json
 from pymagnitude import *
 from sklearn.neighbors import NearestNeighbors
 
@@ -13,21 +13,23 @@ def select(request):
     courses = Course.objects.all()
 
     if request.POST:
-        course_name = request.POST.get('name', None)
-        selected_course = Course.objects.get(name=course_name)
+        course_name = request.POST.get('code', None)
+        selected_course = Course.objects.get(code=course_name)
         selected_course.selected = not selected_course.selected
         selected_course.save()
     else:
         for course in courses:
             course.selected = False
             course.save()
-    names = [course.name for course in courses]
-    js_names = json.dumps(names)
-    return render(request, 'bubbles.html', {'courses': js_names})
+
+    course_list = [x.as_dict() for x in courses]
+    json_courses = json.dumps(course_list)
+
+    return render(request, 'bubbles.html', {'json_courses':  json_courses})
 
 
 def recommend(request):
-    elmo = Magnitude("elmo-light-1536D.magnitude")
+    elmo = Magnitude("elmo_2x2048_256_2048cnn_1xhighway_weights.magnitude")
     knn = NearestNeighbors()
     X_train = []
     X_train_dict = {}
@@ -59,6 +61,8 @@ def recommend(request):
     return render(request, 'recommend.html', {"recs": rec_queries})
 
 
-def course(request):
-    course_to_view = Course.objects.get(code=request.GET['code'])
+def course(request, code):
+    print(code)
+    print("yeet")
+    course_to_view = Course.objects.get(code=code)
     return render(request, 'course.html', {'course': course_to_view})

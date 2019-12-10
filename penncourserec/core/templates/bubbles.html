@@ -15,36 +15,83 @@
     </style>
   </head>
   <body>
-    <h1 class="display-5 ml-5 mt-5">Choose at least 3 courses you've liked at Penn:</h1>
-    <a class="btn btn-outline-secondary ml-5 mt-5" href="/recommend" role="button">I'm done choosing</a>
 
-    <!-- Optional JavaScript -->
+<!-- NAV BAR STUFF -->
+<style>
+.navbar {
+  background: #007bff;
+  background: linear-gradient(to right, #0062E6, #33AEFF);
+}
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="#">Penn Course Recommender</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Navigate to:
+        </a>
+          <div class="dropdown-menu dropdown-menu-right animate slideIn" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Home Page</a>
+            <div class="dropdown-divider"></div>
+             <a class="dropdown-item" href="#">About Us</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<!-- NAV BAR STUFF -->
+
+
+
+    <h1 class="display-5 ml-5 mt-5">Choose at least 3 courses you've liked at Penn:
+    <a class="btn btn-outline-secondary ml-5 mt-5" href="/recommend" role="button">I'm done choosing</a>
+    </h1>
+    
+
+
+    <div id="courseinformation">
+    </div>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.4.3/pixi.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p2.js/0.7.1/p2.js"></script>
     
-
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
   crossorigin="anonymous"></script>
 
-
-
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     <script>
+
+            var values = "{{json_courses}}"
+
+            all_courses = JSON.parse(values.replace(/&quot;/g,'"'))
+           
+
+            // creating objects
             var data = [];
-            var names = {{courses | safe}};
-            for (var i = 0; i < names.length; i ++) {
-               data.push({name: names[i], color: 0xff2c55});
+            for (var i = 0; i < all_courses.length; i ++) {
+               data.push({
+                code: all_courses[i]['code'],
+                name: all_courses[i]['name'],
+                description: all_courses[i]['description'],
+                courseRating: all_courses[i]['courseRating'],
+                profRating: all_courses[i]['profRating'],
+                difficulty : all_courses[i]['difficulty'],
+                selected: all_courses[i]['selected'],
+                color: Math.floor(Math.random() * 16777215)});
             }
-            
+
             function getCoords(ev, canvas){
                 var rect = canvas.getBoundingClientRect();
                 var x = ev.data.global.x - rect.left - rect.width / 2;
@@ -84,10 +131,11 @@
             });
             ceiling.addShape(planeShape);
             world.addBody(ceiling);
+
             //floor
             planeShape = new p2.Plane();
             var floor = new p2.Body({
-              position:[0,-renderer.height/2],
+              position:[0,-renderer.height/4.5], // to not disappear anymore off screen
               damping: 0
             });
             floor.addShape(planeShape);
@@ -114,11 +162,18 @@
             world.addBody(wallRight);
 
 
-            var Ball = function (t, c, r, x) {
+            var Ball = function (code, courseName, description, courseRating, profRating, difficulty, selected, c, r, x) {
                
 
                 this.init = function () {
-                    this.courseName = t;
+                    this.courseCode = code;
+                    this.courseName = courseName;
+                    this.description = description;
+                    this.courseRating = courseRating;
+                    this.profRating = profRating;
+                    this.difficulty = difficulty;
+                    this.isSelected = selected;
+
 
                     this.el = new PIXI.Container();
                     this.el.scale.set(1,-1);
@@ -136,10 +191,10 @@
 
                     stage.addChild(this.el);
 
-                    var text = new PIXI.Text(t, {
-                        fontFamily : 'Arial',
-                        fontSize: 14,
-                        fill : 0xffffff,
+                    var text = new PIXI.Text(code, {
+                        fontFamily : 'Helvetica',
+                        fontSize: 20,
+                        fill : "#ffffff",
                         align : 'center',
                         wordWrap: true
                     });
@@ -197,7 +252,14 @@
                 }
 
                 this.click = function () {
-                    course = this.courseName;
+                    course = this.courseCode;
+                    // flipping selected state
+                    if (this.selected) {
+                        this.selected = false;
+                    } else {
+                        this.selected = true;
+                    }
+
                     this.enlarged = !this.enlarged;
                     TweenMax.to(this, 0.2, {
                         radius: this.enlarged ? this.baseRadius+20 : this.baseRadius,
@@ -205,12 +267,13 @@
                         onComplete: this.updateRadius.bind(this)
                     });
                     function postCourse(course) {
+
                      $.ajax({
                             url: "/select",
                             type: "POST",
                             dataType: "json",
                             data: {
-                                'name': course,
+                                'code': course,
                                 csrfmiddlewaretoken: '{{ csrf_token }}',
                                 },
                             success : function(json) {
@@ -218,8 +281,61 @@
                             }
                         });
                  }
-                 postCourse(course);
+
+                function askForInfo() {
+                        console.log(this.course);
+                        stringRep = this.course.replace(/ +/g, "");
+
+
+                        var body = document.getElementsByTagName('body')[0]
+
+                        newdiv = document.createElement('div');
+                        newdiv.className = "col text-center";
+                        
+                        newbutton = document.createElement('button');   //create a div
+
+                        newbutton.id = stringRep;   
+
+                        newbutton.className = "btn btn-danger text-center";
+                        newbutton.style = "btn btn-danger";
+
+                        a = document.createElement('a');
+
+
+                 
+                        a.setAttribute('href',"/course/".concat(stringRep));
+                        newbutton.appendChild(a);
+
+                        var course = "Would you like to learn more about ".concat(this.course).concat("?");
+                        newContent = document.createTextNode(course);
+
+                        // appending content
+                        newbutton.appendChild(newContent)
+                        newdiv.appendChild(newbutton);
+                        var currentDiv = document.getElementById("courseinformation");
+                        document.body.insertBefore(newdiv, currentDiv);
+
+                        br = document.createElement('br'); // adding line break
+
+                        document.body.insertBefore(br, currentDiv);
                 }
+
+                function deleteInfo() {
+                    rep = this.course.replace(/ +/g, ""); // removes all spaces
+                    elem = "#".concat(rep)
+                    var element = document.querySelector(elem);
+                    element.parentNode.removeChild(element);
+                }
+
+               if (this.selected) {
+                    askForInfo();
+               } else {
+                    deleteInfo();
+               }
+                
+                postCourse.id = "postCourse";
+                postCourse(course);
+            }
 
                 this.updateRadius = function () {
                     this.shape.radius = this.radius;
@@ -241,8 +357,19 @@
                 this.el.on('pointercancel', this.onPointerUp.bind(this));
             }
 
-            for (var i = 0; i < data.length; i ++) {
-                var ball = new Ball(data[i].name, data[i].color, 50, i);
+            // CREATING ALL BALLS
+            for (var i = 0; i < data.length; i++) {
+                var ball = new Ball(
+                    data[i].code, 
+                    data[i].name,
+                    data[i].description,
+                    data[i].courseRating,
+                    data[i].profRating,
+                    data[i].difficulty,
+                    false,
+                    data[i].color,
+                    80, 
+                    i);
                 balls.push(ball);
             }
 
@@ -283,5 +410,8 @@
             animate();
             console.log(world)
     </script>
+
+
+
   </body>
 </html>
