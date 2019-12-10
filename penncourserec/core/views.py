@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from core.models import Course
+import json
 
 
 def splash(request):
@@ -8,7 +9,9 @@ def splash(request):
 
 def select(request):
     courses = Course.objects.all()
-    return render(request, 'bubbles.html', {'courses': courses})
+    names = [course.name for course in courses]
+    js_names = json.dumps(names)
+    return render(request, 'bubbles.html', {'courses': js_names})
 
 
 def recommend(request):
