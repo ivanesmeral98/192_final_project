@@ -9,23 +9,27 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
-      <h1 class="display-4 ml-5 mt-5">We think you'd like the following classes: </h1>
+      <h1 class="display-4 ml-5 mt-5">{{course.code}} </h1>
 
        <div class="container">
         <div class="row">
           <div class="col-sm">
-            {% for rec in recs %}
               <div class="card mt-2" style="width: 18rem;">
                   <div class="card-body">
-                    <a href="course?code={{rec.code}}" class="card-subtitle mb-2 text-muted">{{rec.code}}</a>
-                    <p class="card-text">{{rec.name}}</p>
-                    <h6 class="card-subtitle mb-2 text-muted">Course rating: {{rec.courseRating}}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Professor rating: {{rec.profRating}}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Difficulty: {{rec.difficulty}}</h6>
+                    <a href="course?code={{course.code}}" class="card-subtitle mb-2 text-muted">{{course.code}}</a>
+                    <p class="card-text">{{course.name}}</p>
+                    <h6 class="card-subtitle mb-2 text-muted">Course rating: {{course.courseRating}}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Professor rating: {{course.profRating}}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Difficulty: {{course.difficulty}}</h6>
                   </div>
               </div>
-            {% endfor %}
           </div>
+        </div>
+       </div>
+
+        <p class="lead">
+            {{course.description}}
+        </p>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
