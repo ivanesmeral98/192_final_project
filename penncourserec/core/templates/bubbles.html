@@ -24,7 +24,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.4.3/pixi.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p2.js/0.7.1/p2.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+
+
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
@@ -118,8 +128,11 @@
 
 
             var Ball = function (t, c, r, x) {
+               
 
                 this.init = function () {
+                    this.courseName = t;
+
                     this.el = new PIXI.Container();
                     this.el.scale.set(1,-1);
                     this.baseRadius = this.radius = r;
@@ -197,13 +210,28 @@
                 }
 
                 this.click = function () {
-
+                    course = this.courseName;
                     this.enlarged = !this.enlarged;
                     TweenMax.to(this, 0.2, {
                         radius: this.enlarged ? this.baseRadius+20 : this.baseRadius,
                         onUpdate: this.updateRadius.bind(this),
                         onComplete: this.updateRadius.bind(this)
                     });
+                    function postCourse(course) {
+                     $.ajax({
+                            url: "/select",
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                'name': course,
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                },
+                            success : function(json) {
+                                alert("Successfully sent the URL to Django");
+                            }
+                        });
+                 }
+                 postCourse(course);
                 }
 
                 this.updateRadius = function () {

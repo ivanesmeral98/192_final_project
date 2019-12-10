@@ -7,4 +7,4 @@ class Course(models.Model):
     courseRating = models.DecimalField(max_digits=2, decimal_places=1)
     profRating = models.DecimalField(max_digits=2, decimal_places=1)
     difficulty = models.DecimalField(max_digits=2, decimal_places=1)
-    selected = models.BooleanField
+    selected = models.BooleanField(default=False)
