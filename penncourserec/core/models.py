@@ -1,6 +1,6 @@
 from django.db import models
 
-
+# Single model that encapsulates all courses in the recommender.
 class Course(models.Model):
     name = models.TextField(max_length=50)
     code = models.TextField(max_length=10)

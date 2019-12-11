@@ -6,11 +6,11 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import pprint
 
-
+# view to process home page
 def splash(request):
     return render(request, 'splash.html', {})
 
-
+# view to process bubbles (selection) page
 def select(request):
     courses = Course.objects.all()
 
@@ -29,13 +29,16 @@ def select(request):
 
     return render(request, 'bubbles.html', {'json_courses':  json_courses})
 
-
+# view to process recommendations page
 def recommend(request):
+    # elmo embeddings
     elmo = Magnitude('elmo-light-1536D.magnitude')
     knn = NearestNeighbors()
     X_train = []
     X_train_dict = {}
     X_test = []
+
+    # create train, test datasets
     for course in Course.objects.all():
         all_text = course.name + course.code + course.description
         if course.selected:
@@ -51,12 +54,15 @@ def recommend(request):
     knn.fit(X_train)
     recommendations = set()
 
+    #find the 3 nearest neighbors
     nearest = knn.kneighbors(X_test.reshape(1, -1), 3)[1][0]
     for idx in nearest:
         for k in X_train_dict:
             if np.array_equal(X_train_dict[k], X_train[idx]):
                 recommendations.add(k)
                 break
+
+    #prettyprint the recommendations
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(recommendations)
 
@@ -64,13 +70,15 @@ def recommend(request):
 
     return render(request, 'recommend.html', {"recs": rec_queries})
 
-
+# view to process course page
 def course_view(request):
     course_to_view = Course.objects.get(code=request.GET['code'])
     return render(request, 'course.html', {'course': course_to_view})
 
+# view to process learn more page
 def learn_more(request):
     return render(request, 'learn_more.html', {})
 
+# view to process about page
 def about(request):
     return render(request, 'about.html', {})
