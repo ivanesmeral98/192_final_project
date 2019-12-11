@@ -13,3 +13,8 @@ class Course(models.Model):
     def as_dict(self):
         return {'name': self.name, 'code': self.code, 'description': self.description, 'courseRating': self.courseRating, 'profRating': self.profRating, 'difficulty': self.difficulty, 'selected': self.selected}
 
+    def __str__(self):
+        return self.name
+
+    def __len__(self):
+        return len(self.code)

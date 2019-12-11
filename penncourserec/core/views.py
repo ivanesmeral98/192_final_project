@@ -3,6 +3,8 @@ from core.models import Course
 import simplejson as json
 from pymagnitude import *
 from sklearn.neighbors import NearestNeighbors
+import numpy as np
+import pprint
 
 
 def splash(request):
@@ -55,12 +57,18 @@ def recommend(request):
             if np.array_equal(X_train_dict[k], X_train[idx]):
                 recommendations.add(k)
                 break
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(recommendations)
 
     rec_queries = Course.objects.filter(name__in=recommendations)
 
     return render(request, 'recommend.html', {"recs": rec_queries})
 
 
-def course(request):
+def course_view(request):
     course_to_view = Course.objects.get(code=request.GET['code'])
     return render(request, 'course.html', {'course': course_to_view})
+
+
+def learn_more(request):
+    return render(request, 'learn_more.html', {})
