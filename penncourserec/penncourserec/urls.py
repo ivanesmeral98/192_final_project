@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import splash, select, recommend, course_view, learn_more
+from core.views import splash, select, recommend, course_view, learn_more, about
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,5 +23,6 @@ urlpatterns = [
     path('select', select, name='select'),
     path('recommend', recommend, name='recommend'),
     path('course', course_view, name='course'),
-    path('learnmore', learn_more, name='learnmore')
+    path('learnmore', learn_more, name='learnmore'),
+    path('about', about, name='about')
 ]

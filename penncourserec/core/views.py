@@ -69,6 +69,8 @@ def course_view(request):
     course_to_view = Course.objects.get(code=request.GET['code'])
     return render(request, 'course.html', {'course': course_to_view})
 
-
 def learn_more(request):
     return render(request, 'learn_more.html', {})
+
+def about(request):
+    return render(request, 'about.html', {})
